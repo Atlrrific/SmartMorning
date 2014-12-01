@@ -66,7 +66,8 @@ int tempo = 150;
 void setup(){
   //Calling the heartbeat setup
   heartBeatSetUp();
-  
+    Serial.begin(9600); // temperature sensor
+
   buzzerSetup();
    
      //LCD
@@ -79,7 +80,7 @@ void setup(){
 void loop(){
   
   heartBeatLoop();
-  
+  tempertureLoop();
   lcd.setCursor(0,0);
 
    lcd.clear();
@@ -122,6 +123,44 @@ void heartBeatLoop(){
   ledFadeToBeat();
   
   delay(20);       //  take a break
+}
+
+void tempertureLoop(){
+  lcd.setCursor(1,0);
+  
+   float voltage, degreesC;// degreesF;
+
+  voltage = getVoltage(temperaturePin);
+
+  degreesC = (voltage - 0.5) * 100.0;
+  
+  degreesF = degreesC * (9.0/5.0) + 32.0;
+
+  Serial.print("voltage: ");
+  Serial.print(voltage);
+  Serial.print("  deg C: ");
+  Serial.print(degreesC);
+  Serial.print("  deg F: ");
+  Serial.println(degreesF);
+  lcd.clear();
+  lcd.print("  deg F: ");
+  lcd.print(degreesF);
+  
+ //  lcd.setCursor(0,1);
+   
+ // lcd.print("I am awesome!");
+
+  // These statements will print lines of data like this:
+  // "voltage: 0.73 deg C: 22.75 deg F: 72.96"
+
+  // Note that all of the above statements are "print", except
+  // for the last one, which is "println". "Print" will output
+  // text to the SAME LINE, similar to building a sentence
+  // out of words. "Println" will insert a "carriage return"
+  // character at the end of whatever it prints, moving down
+  // to the NEXT line.
+   
+  delay(1000); // repeat once per second (change as you wish!)
   
 }
 
@@ -206,7 +245,12 @@ int frequency (char note)
               // but we still need to return a value, so return 0.
               
 }
-  
+ 
+float getVoltage(int pin)
+{
+  return (analogRead(pin) * 0.004882814);
+
+}
 
 
 
