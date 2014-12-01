@@ -114,7 +114,6 @@ char notes[] = "cdfda ag cdfdg gf "; // a space represents a rest
 int beats[] = {1,1,1,1,1,1,4,4,2,1,1,1,1,1,1,4,4,2};
 int tempo = 150;
 
-
 void setup()
 {
   
@@ -191,8 +190,6 @@ void setup()
 
 void loop()
 {
-  
-   
   
   ///////////////////////////////////////////////////////////////
   
@@ -402,5 +399,6 @@ lcd.print("   Wake Up!");
               // but we still need to return a value, so return 0.
               
 }
+
 
 
