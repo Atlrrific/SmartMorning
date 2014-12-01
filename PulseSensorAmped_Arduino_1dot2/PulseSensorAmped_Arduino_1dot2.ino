@@ -27,7 +27,7 @@ This update fixes the firstBeat and secondBeat flag usage so that realistic BPM 
 
 */
 #include <LiquidCrystal.h>
-
+#include <NewTone.h>
 
 
 
@@ -66,6 +66,8 @@ int tempo = 150;
 void setup(){
   //Calling the heartbeat setup
   heartBeatSetUp();
+  
+  buzzerSetup();
    
      //LCD
    lcd.begin(16, 2);
@@ -85,8 +87,6 @@ void loop(){
   lcd.print(BPM);
 
    delay(1000);
-   
-   tempertureLoop();
 
 }
 
@@ -122,44 +122,6 @@ void heartBeatLoop(){
   ledFadeToBeat();
   
   delay(20);       //  take a break
-}
-
-void tempertureLoop(){
-
-  
-   float voltage, degreesC;// degreesF;
-
-  voltage = getVoltage(temperaturePin);
-
-  degreesC = (voltage - 0.5) * 100.0;
-  
-  degreesF = degreesC * (9.0/5.0) + 32.0;
-
-  Serial.print("voltage: ");
-  Serial.print(voltage);
-  Serial.print("  deg C: ");
-  Serial.print(degreesC);
-  Serial.print("  deg F: ");
-  Serial.println(degreesF);
-   lcd.clear();
-  lcd.print("  deg F: ");
-  lcd.print(degreesF);
-  
- //  lcd.setCursor(0,1);
-   
- // lcd.print("I am awesome!");
-
-  // These statements will print lines of data like this:
-  // "voltage: 0.73 deg C: 22.75 deg F: 72.96"
-
-  // Note that all of the above statements are "print", except
-  // for the last one, which is "println". "Print" will output
-  // text to the SAME LINE, similar to building a sentence
-  // out of words. "Println" will insert a "carriage return"
-  // character at the end of whatever it prints, moving down
-  // to the NEXT line.
-   
-  delay(1000); // repeat once per second (change as you wish!)
   
 }
 
@@ -181,10 +143,73 @@ void sendDataToProcessing(char symbol, int data ){
     Serial.println(data);                // the data to send culminating in a carriage return
   }
 
-float getVoltage(int pin)
-{
-  return (analogRead(pin) * 0.004882814);
 
+///////////////////////////////////////////////////////////////////////
+
+//Buzzer Functions
+
+///////////////////////////////////////////////////////////////////////
+void buzzerSetup(){
+ 
+  pinMode(buzzerPin, OUTPUT);//BUZZER
+  
+  int i, duration;
+  
+  for (i = 0; i < songLength; i++) // step through the song arrays
+  {
+    duration = beats[i] * tempo;  // length of note/rest in ms
+    
+    if (notes[i] == ' ')          // is this a rest? 
+    {
+      delay(duration);            // then pause for a moment
+    }
+    else                          // otherwise, play the note
+    {
+      NewTone(buzzerPin, frequency(notes[i]), duration);
+      delay(duration);            // wait for tone to finish
+    }
+    delay(tempo/10);              // brief pause between notes
+  }
+  
 }
+
+int frequency (char note)
+{
+   
+  int i;
+  const int numNotes = 8;  // number of notes we're storing
+  
+  // The following arrays hold the note characters and their
+  // corresponding frequencies. The last "C" note is uppercase
+  // to separate it from the first lowercase "c". If you want to
+  // add more notes, you'll need to use unique characters.
+
+  // For the "char" (character) type, we put single characters
+  // in single quotes.
+   lcd.setCursor(0,1);
+   lcd.print("   Wake Up!");
+
+  char names[] = { 'c', 'd', 'e', 'f', 'g', 'a', 'b', 'C' };
+  int frequencies[] = {262, 294, 330, 349, 392, 440, 494, 523};
+  
+  // Now we'll search through the letters in the array, and if
+  // we find it, we'll return the frequency for that note.
+  
+  for (i = 0; i < numNotes; i++)  // Step through the notes
+  {
+    if (names[i] == note)         // Is this the one?
+    {
+      return(frequencies[i]);     // Yes! Return the frequency
+    }
+  }
+  return(0);  // We looked through everything and didn't find it,
+              // but we still need to return a value, so return 0.
+              
+}
+  
+
+
+
+
 
 

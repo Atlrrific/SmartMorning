@@ -113,23 +113,10 @@ const int songLength = 18; //buzzer
 char notes[] = "cdfda ag cdfdg gf "; // a space represents a rest
 int beats[] = {1,1,1,1,1,1,4,4,2,1,1,1,1,1,1,4,4,2};
 int tempo = 150;
-volatile int BPM;                   // used to hold the pulse rate
-volatile int Signal;                // holds the incoming raw data
-volatile int IBI = 600;             // holds the time between beats, the Inter-Beat Interval
-volatile boolean Pulse = false;     // true when pulse wave is high, false when it's low
-volatile boolean QS = false;   
-//  VARIABLES
-int pulsePin = 0;                 // Pulse Sensor purple wire connected to analog pin 0
-int blinkPin = 13;                // pin to blink led at each beat
-int fadePin = 5;                  // pin to do fancy classy fading blink at each beat
-int fadeRate = 0;                 // used to fade LED on with PWM on fadePin
+
 
 void setup()
 {
-    pinMode(blinkPin,OUTPUT);         // pin that will blink to your heartbeat!
-  pinMode(fadePin,OUTPUT);          // pin that will fade to your heartbeat!
-  Serial.begin(115200);             // we agree to talk fast!
-  interruptSetup();  
   
    pinMode(buzzerPin, OUTPUT);//BUZZER
    
@@ -205,21 +192,8 @@ void setup()
 void loop()
 {
   
-<<<<<<< Updated upstream
-=======
-    sendDataToProcessing('S', Signal);     // send Processing the raw Pulse Sensor data
-  if (QS == true){                       // Quantified Self flag is true when arduino finds a heartbeat
-        fadeRate = 255;                  // Set 'fadeRate' Variable to 255 to fade LED with pulse
-        sendDataToProcessing('B',BPM);   // send heart rate with a 'B' prefix
-        sendDataToProcessing('Q',IBI);   // send time between beats with a 'Q' prefix
-        QS = false;                      // reset the Quantified Self flag for next time    
-     }
+   
   
-  ledFadeToBeat();
-  
-  delay(20);                             //  take a break
-  
->>>>>>> Stashed changes
   ///////////////////////////////////////////////////////////////
   
   
@@ -428,20 +402,5 @@ lcd.print("   Wake Up!");
               // but we still need to return a value, so return 0.
               
 }
-
-void ledFadeToBeat(){
-    fadeRate -= 15;                         //  set LED fade value
-    fadeRate = constrain(fadeRate,0,255);   //  keep LED fade value from going into negative numbers!
-    analogWrite(fadePin,fadeRate);          //  fade LED
-  }
-
-
-void sendDataToProcessing(char symbol, int data ){
-    Serial.print(symbol);                // symbol prefix tells Processing what type of data is coming
-    Serial.println(data);                // the data to send culminating in a carriage return
-  }
-
-
-
 
 
